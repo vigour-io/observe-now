@@ -37,7 +37,7 @@ request
     /* handle the error */
   })
   .on('end', () => {
-    /* you got all deployments move on */
+    /* we got all deployments move on */
   })
-  .send()
+  .send() // request won't be sent until we call this
 ```
