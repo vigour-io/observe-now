@@ -22,7 +22,7 @@ It's a single method with 3 parameters. Returns a vigour-observable.
 ```js
 const observeNow = require('ploy-observe-now')
 
-const progress = observeNow('deployments', 'API-TOKEN', 'deployments.*')
+const request = observeNow('deployments', 'API-TOKEN', 'deployments.*')
 
 request
   .on('data', deployment => {
