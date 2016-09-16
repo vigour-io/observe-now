@@ -1,5 +1,5 @@
 {
-  "name": "ploy-observe-now",
+  "name": "observe-now",
   "version": "0.1.0",
   "description": "Now API Client in form of viogur-observable",
   "main": "./lib/index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vigour-io/ploy-observe-now.git"
+    "url": "git+https://github.com/vigour-io/observe-now.git"
   },
   "keywords": [
     "ploy",
@@ -23,9 +23,9 @@
   "author": "Mustafa Dokumacı",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vigour-io/ploy-observe-now/issues"
+    "url": "https://github.com/vigour-io/observe-now/issues"
   },
-  "homepage": "https://github.com/vigour-io/ploy-observe-now#readme",
+  "homepage": "https://github.com/vigour-io/observe-now#readme",
   "dependencies": {
     "JSONStream": "^1.0.0",
     "vigour-observable": "^3.0.0"
