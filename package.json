@@ -1,6 +1,6 @@
 {
   "name": "observe-now",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Now API Client in form of viogur-observable",
   "main": "./lib/index.js",
   "scripts": {
