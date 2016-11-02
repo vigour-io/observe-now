@@ -28,7 +28,7 @@
   "homepage": "https://github.com/vigour-io/observe-now#readme",
   "dependencies": {
     "JSONStream": "^1.0.0",
-    "now": "0.25.0",
+    "now": "0.25.1",
     "vigour-observable": "^3.1.0"
   },
   "devDependencies": {
