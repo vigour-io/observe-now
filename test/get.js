@@ -4,7 +4,7 @@ const test = require('tape')
 const sinon = require('sinon')
 const https = require('https')
 
-const now = require('../lib/get')
+const now = require('../lib')
 
 const httpsRequestOptions = {
   hostname: 'api.zeit.co',
@@ -40,7 +40,7 @@ test('now client - catch connection error', t => {
       abort: () => {}
     })
 
-  now('deployments', 'API-TOKEN', 'deployments.*')
+  now.get('deployments', 'API-TOKEN', 'deployments.*')
     .on('error', error => {
       t.equal(error, 'connection error', 'connection error caught')
       request.restore()
@@ -77,7 +77,7 @@ test('now client - get deployments list', t => {
       abort: () => {}
     })
 
-  now('deployments', 'API-TOKEN', 'deployments.*')
+  now.get('deployments', 'API-TOKEN', 'deployments.*')
     .on('data', dep => {
       t.equal(dep.constructor, Object, 'deployment is an object')
       t.equal(dep.name, 'a', 'deployment name is "a"')
@@ -114,7 +114,7 @@ test('now client - get package.json not a json', t => {
       abort: () => {}
     })
 
-  now('deployments', 'API-TOKEN')
+  now.get('deployments', 'API-TOKEN')
     .on('error', err => {
       t.equal(/^Invalid JSON/.test(err.message), true, 'returns JSON Parse Error')
       request.restore()
@@ -175,7 +175,7 @@ test('now client - get package.json', t => {
       abort: () => {}
     })
 
-  now('deployments/deployment-uid/links', 'API-TOKEN', 'files.*')
+  now.get('deployments/deployment-uid/links', 'API-TOKEN', 'files.*')
     .on('data', file => {
       t.equal(file.constructor, Object, 'file is an object')
       t.equal(file.file, 'package.json', 'file name is "package.json"')
@@ -183,7 +183,7 @@ test('now client - get package.json', t => {
     })
     .send()
 
-  now('deployments/deployment-uid/files/pkg-uid', 'API-TOKEN', false)
+  now.get('deployments/deployment-uid/files/pkg-uid', 'API-TOKEN', false)
     .on('data', pkg => {
       t.equal(pkg.constructor, Object, 'package.json is an object')
       t.equal(pkg.version, '1.1.1', 'version is 1.1.1')
