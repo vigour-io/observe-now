@@ -48,7 +48,7 @@ test('deploy - alias', t => {
 
   t.plan(4)
 
-  const deployment = now.deploy(process.env.NOW_TOKEN)
+  const deployment = now.deployment(process.env.NOW_TOKEN)
 
   deployment
     .deploy('directory', {env1: 'val1'})
@@ -86,7 +86,7 @@ test('load - alias', t => {
 
   t.plan(2)
 
-  const deployment = now.deploy(process.env.NOW_TOKEN)
+  const deployment = now.deployment(process.env.NOW_TOKEN)
 
   deployment
     .load('https://deployment-url.now.sh')
