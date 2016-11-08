@@ -15,7 +15,7 @@ npm install observe-now --save
 
 ## Usage
 
-Get is  a method with 3 parameters. Returns a vigour-observable.
+Get is  a method with 3 parameters. Returns a `vigour-observable`.
 
 ```js
 const observeNow = require('observe-now')
@@ -40,14 +40,17 @@ request
   .send() // request won't be sent until we call this
 ```
 
-Deploy is a method with 3 parameters.
+Deployment is a method with a single parameter. Returns a `vigour-observable`.
+
+You can deploy a new package and alias it on the fly:
 
 ```js
 const observeNow = require('observe-now')
 
-const deployment = observeNow.deploy('directory', {env1: 'one', env2: 'two'}, 'api-token')
+const deployment = observeNow.deployment('api-token')
 
 deployment
+  .deploy('directory', {env1: 'one', env2: 'two'})
   .on('deployed', () => {
     console.log('Deployed to now, waiting until ready...')
   })
@@ -57,9 +60,52 @@ deployment
   })
   .on('aliased', () => {
     console.log('Alias successful!')
+    deployment.remove()
   })
   .on('error', error => {
     console.error('Deployment failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
   })
-  .deploy() // Deployment won't start until we call this
+```
+
+Or you can load an existing deployment and alias it:
+
+```js
+deployment
+  .load('https://your-deployment-url.now.sh')
+  .on('loaded', () => {
+    console.log('Deployment loaded!')
+    deployment.alias('some-domain.com')
+  })
+  .on('aliased', () => {
+    console.log('Alias successful!')
+    deployment.remove()
+  })
+  .on('error', error => {
+    console.error('Alias failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
+  })
+```
+
+You can also remove any deployment any time you need:
+
+```js
+const observeNow = require('observe-now')
+
+const deployment = observeNow.deployment('api-token')
+
+deployment
+  .deploy('directory', {env1: 'one', env2: 'two'})
+  .on('deployed', () => {
+    console.log('Deployed to now, waiting until ready...')
+  })
+  .on('ready', () => {
+    console.log('Deployment ready, removing...')
+    deployment.kill()
+  })
+  .on('killed', () => {
+    console.log('Kill successful!')
+    deployment.remove()
+  })
+  .on('error', error => {
+    console.error('Deployment failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
+  })
 ```
