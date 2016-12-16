@@ -3,6 +3,7 @@
 const test = require('tape')
 const sinon = require('sinon')
 const https = require('https')
+const JSONStream = require('JSONStream')
 
 const now = require('../lib')
 
@@ -52,6 +53,7 @@ test('now client - get deployments list', t => {
   t.plan(2)
 
   const request = sinon.stub(https, 'request')
+  const parse = sinon.stub(JSONStream, 'parse')
 
   request
     .withArgs(Object.assign({
@@ -62,19 +64,29 @@ test('now client - get deployments list', t => {
       on: (e, cb) => {
         if (e === 'response') {
           return cb({
-            on: (e, cb) => {
+            on (e, cb) {
               if (e === 'end') {
                 return setTimeout(cb, 0)
               }
             },
-            pipe: (parser) => {
-              setTimeout(parser.write.bind(parser), 0, '{"deployments":[{"name":"a"}]}')
-              return parser
-            }
+            pipe: parser => parser
           })
         }
       },
       abort: () => {}
+    })
+
+  parse
+    .withArgs('deployments.*')
+    .returns({
+      on: (e, cb) => {
+        if (e === 'end') {
+          return setTimeout(cb, 0)
+        } else if (e === 'data') {
+          return setTimeout(cb, 0, {name: 'a'})
+        }
+      },
+      write () {}
     })
 
   now.get('deployments', 'API-TOKEN', 'deployments.*')
@@ -84,6 +96,7 @@ test('now client - get deployments list', t => {
     })
     .on('end', () => {
       request.restore()
+      parse.restore()
     })
     .send()
 })
@@ -92,6 +105,7 @@ test('now client - get package.json not a json', t => {
   t.plan(1)
 
   const request = sinon.stub(https, 'request')
+  const parse = sinon.stub(JSONStream, 'parse')
 
   request
     .withArgs(Object.assign({
@@ -104,20 +118,30 @@ test('now client - get package.json not a json', t => {
           return cb({
             on: (e, cb) => {
             },
-            pipe: (parser) => {
-              setTimeout(parser.write.bind(parser), 0, 'not a json')
-              return parser
-            }
+            pipe: parser => parser
           })
         }
       },
       abort: () => {}
     })
 
+  parse
+    .returns({
+      on: (e, cb) => {
+        if (e === 'end') {
+          return setTimeout(cb, 0)
+        } else if (e === 'error') {
+          return setTimeout(cb, 0, { message: 'Invalid JSON foo bar' })
+        }
+      },
+      write () {}
+    })
+
   now.get('deployments', 'API-TOKEN')
     .on('error', err => {
       t.equal(/^Invalid JSON/.test(err.message), true, 'returns JSON Parse Error')
       request.restore()
+      parse.restore()
     })
     .send()
 })
@@ -126,6 +150,7 @@ test('now client - get package.json', t => {
   t.plan(5)
 
   const request = sinon.stub(https, 'request')
+  const parse = sinon.stub(JSONStream, 'parse')
 
   request
     .withArgs(Object.assign({
@@ -141,10 +166,7 @@ test('now client - get package.json', t => {
                 return setTimeout(cb, 0)
               }
             },
-            pipe: (parser) => {
-              setTimeout(parser.write.bind(parser), 0, '{"files": [{"file": "package.json", "sha": "pkg-uid"}]}')
-              return parser
-            }
+            pipe: parser => parser
           })
         }
       },
@@ -165,14 +187,37 @@ test('now client - get package.json', t => {
                 return setTimeout(cb, 0)
               }
             },
-            pipe: (parser) => {
-              setTimeout(parser.write.bind(parser), 0, '{"version": "1.1.1"}')
-              return parser
-            }
+            pipe: parser => parser
           })
         }
       },
       abort: () => {}
+    })
+
+  parse
+    .withArgs('files.*')
+    .returns({
+      on: (e, cb) => {
+        if (e === 'end') {
+          return setTimeout(cb, 0)
+        } else if (e === 'data') {
+          return setTimeout(cb, 0, { file: 'package.json', sha: 'pkg-uid' })
+        }
+      },
+      write () {}
+    })
+
+  parse
+    .withArgs(false)
+    .returns({
+      on: (e, cb) => {
+        if (e === 'end') {
+          return setTimeout(cb, 0)
+        } else if (e === 'data') {
+          return setTimeout(cb, 0, { version: '1.1.1' })
+        }
+      },
+      write () {}
     })
 
   now.get('deployments/deployment-uid/links', 'API-TOKEN', 'files.*')
