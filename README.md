@@ -15,7 +15,7 @@ npm install observe-now --save
 
 ## Usage
 
-Get is  a method with 3 parameters. Returns a `vigour-observable`.
+Get is  a method with 3 parameters. Returns a `brisky-struct`.
 
 ```js
 const observeNow = require('observe-now')
@@ -23,7 +23,7 @@ const observeNow = require('observe-now')
 const request = observeNow.get('deployments', 'API-TOKEN', 'deployments.*')
 
 request
-  .on('data', deployment => {
+  .on('response', deployment => {
     /* do something with deployment */
     if (deployment.uid === whatILookFor) {
       // stop this flow
@@ -36,6 +36,7 @@ request
   })
   .on('end', () => {
     /* we got all deployments move on */
+    request.set(null)
   })
   .send() // request won't be sent until we call this
 ```
@@ -60,7 +61,7 @@ deployment
   })
   .on('aliased', () => {
     console.log('Alias successful!')
-    deployment.remove()
+    deployment.set(null)
   })
   .on('error', error => {
     console.error('Deployment failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
@@ -78,7 +79,7 @@ deployment
   })
   .on('aliased', () => {
     console.log('Alias successful!')
-    deployment.remove()
+    deployment.set(null)
   })
   .on('error', error => {
     console.error('Alias failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
@@ -103,7 +104,7 @@ deployment
   })
   .on('killed', () => {
     console.log('Kill successful!')
-    deployment.remove()
+    deployment.set(null)
   })
   .on('error', error => {
     console.error('Deployment failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
