@@ -34,7 +34,7 @@ test('deploy - alias', t => {
     .withArgs('deployments/deployment-id', 'NOW-TOKEN', false)
     .returns({
       on (e, cb) {
-        if (e === 'data') {
+        if (e === 'response') {
           setTimeout(cb, 0, { state: 'READY' })
         }
         return this
