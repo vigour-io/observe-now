@@ -90,7 +90,7 @@ test('now client - get deployments list', t => {
     })
 
   now.get('deployments', 'API-TOKEN', 'deployments.*')
-    .on('data', dep => {
+    .on('response', dep => {
       t.equal(dep.constructor, Object, 'deployment is an object')
       t.equal(dep.name, 'a', 'deployment name is "a"')
     })
@@ -221,7 +221,7 @@ test('now client - get package.json', t => {
     })
 
   now.get('deployments/deployment-uid/links', 'API-TOKEN', 'files.*')
-    .on('data', file => {
+    .on('response', file => {
       t.equal(file.constructor, Object, 'file is an object')
       t.equal(file.file, 'package.json', 'file name is "package.json"')
       t.equal(file.sha, 'pkg-uid', 'file sha is "pkg-uid"')
@@ -229,7 +229,7 @@ test('now client - get package.json', t => {
     .send()
 
   now.get('deployments/deployment-uid/files/pkg-uid', 'API-TOKEN', false)
-    .on('data', pkg => {
+    .on('response', pkg => {
       t.equal(pkg.constructor, Object, 'package.json is an object')
       t.equal(pkg.version, '1.1.1', 'version is 1.1.1')
     })

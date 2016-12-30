@@ -62,7 +62,7 @@ test('deploy - alias', t => {
     })
     .on('aliased', () => {
       t.ok(true, 'aliased')
-      deployment.remove()
+      deployment.set(null)
       create.restore()
       set.restore()
       get.restore()
@@ -96,7 +96,9 @@ test('load - alias', t => {
     })
     .on('aliased', () => {
       t.ok(true, 'aliased')
-      deployment.remove()
+      deployment.set(null)
+      findDeployment.restore()
+      set.restore()
     })
     .on('error', error => {
       console.error('Alias failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
