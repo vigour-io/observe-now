@@ -12,7 +12,7 @@ const httpsRequestOptions = {
   port: 443,
   method: 'GET',
   headers: {
-    'Authorization': 'Bearer: API-TOKEN'
+    'Authorization': 'Bearer API-TOKEN'
   }
 }
 
