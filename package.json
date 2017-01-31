@@ -1,6 +1,6 @@
 {
   "name": "observe-now",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Now API Client as a brisky-struct",
   "main": "./lib/index.js",
   "scripts": {
