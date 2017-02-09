@@ -23,12 +23,25 @@ test('deploy - alias', t => {
     .withArgs('directory', {
       env: {
         NODE_ENV: 'production',
-        env1: 'val1'
+        env1: 'val1',
+        env2: { uid: 'secret-uid' }
       },
       forwardNpm: true,
       quiet: true
     })
     .returns(Promise.resolve())
+
+  get
+    .withArgs('secrets', 'NOW-TOKEN', 'secrets.*')
+    .returns({
+      on (e, cb) {
+        if (e === 'response') {
+          setTimeout(cb, 0, { name: 'secret', uid: 'secret-uid' })
+        }
+        return this
+      },
+      send () {}
+    })
 
   get
     .withArgs('deployments/deployment-id', 'NOW-TOKEN', false)
@@ -51,7 +64,7 @@ test('deploy - alias', t => {
   const deployment = now.deployment(process.env.NOW_TOKEN)
 
   deployment
-    .deploy('directory', {env1: 'val1'})
+    .deploy('directory', { env1: 'val1', env2: '@secret' })
     .on('deployed', () => {
       t.equals(deployment.id.compute(), 'deployment-id', 'has deployment id')
       t.equals(deployment.url.compute(), 'https://deployment-url.now.sh', 'has deployment url')
