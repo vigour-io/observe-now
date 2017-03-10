@@ -2,8 +2,8 @@
 
 const test = require('tape')
 const sinon = require('sinon')
-const Now = require('now').default
-const Alias = require('now/build/lib/alias').default
+const Now = require('now/build/lib')
+const Alias = require('now/build/lib/alias')
 
 const now = require('../lib')
 
