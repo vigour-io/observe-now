@@ -11,6 +11,7 @@ const now = require('../lib')
 const httpsRequestOptions = {
   protocol: 'https:',
   host: 'API-IP',
+  hostname: 'api.zeit.co',
   method: 'GET',
   headers: {
     'Authorization': 'Bearer API-TOKEN'
