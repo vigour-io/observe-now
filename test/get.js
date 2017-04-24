@@ -9,7 +9,7 @@ const JSONStream = require('JSONStream')
 const now = require('../lib')
 
 const httpsRequestOptions = {
-  protocol: 'https',
+  protocol: 'https:',
   host: 'API-IP',
   method: 'GET',
   headers: {
