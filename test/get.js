@@ -9,8 +9,8 @@ const JSONStream = require('JSONStream')
 const now = require('../lib')
 
 const httpsRequestOptions = {
-  protocol: 'https:',
   host: 'API-IP',
+  port: 443,
   hostname: 'api.zeit.co',
   method: 'GET',
   headers: {
