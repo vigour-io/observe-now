@@ -2,36 +2,17 @@
 
 const test = require('tape')
 const sinon = require('sinon')
-const dns = require('dns')
 const https = require('https')
 const JSONStream = require('JSONStream')
 
 const now = require('../lib')
 
-const httpsRequestOptions = {
-  host: 'API-IP',
-  port: 443,
-  hostname: 'api.zeit.co',
-  method: 'GET',
-  headers: {
-    'Authorization': 'Bearer API-TOKEN'
-  }
-}
-
 test('now client - catch connection error', t => {
   t.plan(1)
 
-  const lookup = sinon.stub(dns, 'lookup')
   const request = sinon.stub(https, 'request')
 
-  lookup
-    .withArgs('api.zeit.co')
-    .callsArgWith(2, null, 'API-IP')
-
   request
-    .withArgs(Object.assign({
-      path: '/now/deployments'
-    }, httpsRequestOptions))
     .returns({
       end: () => {},
       on: (e, cb) => {
@@ -51,7 +32,6 @@ test('now client - catch connection error', t => {
   now.get('deployments', 'API-TOKEN', 'deployments.*')
     .on('error', error => {
       t.equal(error, 'connection error', 'connection error caught')
-      lookup.restore()
       request.restore()
     })
     .send()
@@ -60,18 +40,10 @@ test('now client - catch connection error', t => {
 test('now client - get deployments list', t => {
   t.plan(2)
 
-  const lookup = sinon.stub(dns, 'lookup')
   const request = sinon.stub(https, 'request')
   const parse = sinon.stub(JSONStream, 'parse')
 
-  lookup
-    .withArgs('api.zeit.co')
-    .callsArgWith(2, null, 'API-IP')
-
   request
-    .withArgs(Object.assign({
-      path: '/now/deployments'
-    }, httpsRequestOptions))
     .returns({
       end: () => {},
       on: (e, cb) => {
@@ -108,7 +80,6 @@ test('now client - get deployments list', t => {
       t.equal(dep.name, 'a', 'deployment name is "a"')
     })
     .on('end', () => {
-      lookup.restore()
       request.restore()
       parse.restore()
     })
@@ -118,18 +89,10 @@ test('now client - get deployments list', t => {
 test('now client - get package.json not a json', t => {
   t.plan(1)
 
-  const lookup = sinon.stub(dns, 'lookup')
   const request = sinon.stub(https, 'request')
   const parse = sinon.stub(JSONStream, 'parse')
 
-  lookup
-    .withArgs('api.zeit.co')
-    .callsArgWith(2, null, 'API-IP')
-
   request
-    .withArgs(Object.assign({
-      path: '/now/deployments'
-    }, httpsRequestOptions))
     .returns({
       end: () => {},
       on: (e, cb) => {
@@ -159,7 +122,6 @@ test('now client - get package.json not a json', t => {
   now.get('deployments', 'API-TOKEN')
     .on('error', err => {
       t.equal(/^Invalid JSON/.test(err.message), true, 'returns JSON Parse Error')
-      lookup.restore()
       request.restore()
       parse.restore()
     })
@@ -169,18 +131,11 @@ test('now client - get package.json not a json', t => {
 test('now client - get package.json', t => {
   t.plan(5)
 
-  const lookup = sinon.stub(dns, 'lookup')
   const request = sinon.stub(https, 'request')
   const parse = sinon.stub(JSONStream, 'parse')
 
-  lookup
-    .withArgs('api.zeit.co')
-    .callsArgWith(2, null, 'API-IP')
-
   request
-    .withArgs(Object.assign({
-      path: '/now/deployments/deployment-uid/links'
-    }, httpsRequestOptions))
+    .onFirstCall()
     .returns({
       end: () => {},
       on: (e, cb) => {
@@ -199,9 +154,7 @@ test('now client - get package.json', t => {
     })
 
   request
-    .withArgs(Object.assign({
-      path: '/now/deployments/deployment-uid/files/pkg-uid'
-    }, httpsRequestOptions))
+    .onSecondCall()
     .returns({
       end: () => {},
       on: (e, cb) => {
@@ -259,7 +212,6 @@ test('now client - get package.json', t => {
       t.equal(pkg.version, '1.1.1', 'version is 1.1.1')
     })
     .on('end', () => {
-      lookup.restore()
       request.restore()
       parse.restore()
     })
